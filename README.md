@@ -1,1 +1,1 @@
-# Xtrip.ai
+# XTrips.ai
