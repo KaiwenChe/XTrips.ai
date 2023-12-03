@@ -2,18 +2,15 @@
 const express = require('express');
 const app = express();
 const config = require('./config.js');
-// console.log("configloaded")
-// const dbConnection = require('./database.js')
+const dbConnection = require('./database.js')
 const { HeadBucketCommand, ListObjectsV2Command } = require('@aws-sdk/client-s3');
 // const { s3, s3_bucket_name, s3_region_name } = require('./aws.js');
 var startTime;
 
 app.listen(config.service_port, () => {
   startTime = Date.now();
-  console.log('web service running...');
-  //
-  // Configure AWS to use our config file:
-  //
+  console.log('web service running on:', config.service_port);
+  
   process.env.AWS_SHARED_CREDENTIALS_FILE = config.xtrip_config;
 });
 
@@ -29,9 +26,9 @@ app.get('/', (req, res) => {
 });
 
 //
-// service functions:
+// functions:
 //
 var register = require('./apis/register.js');
 
 
-app.post('/register', register.get_stats);  //app.get('/stats', (req, res) => {...});
+app.get('/register', register.register_user);  

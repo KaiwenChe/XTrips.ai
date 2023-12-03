@@ -1,11 +1,3 @@
-//
-// config.js
-//
-// Web service configuration parameters, separate
-// from our config file that contains 
-// AWS-specific configuration information.
-//
-
 const config = {
     xtrip_config: "xtrip-config.ini",
     xtrip_profile: "",
