@@ -31,4 +31,4 @@ app.get('/', (req, res) => {
 var register = require('./apis/register.js');
 
 
-app.get('/register', register.register_user);  
+app.post('/register', register.register_user);  

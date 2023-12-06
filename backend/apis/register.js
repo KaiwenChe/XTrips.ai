@@ -2,7 +2,6 @@ const dbConnection = require('../database.js')
 
 exports.register_user = async (req, res) => {
 
-
   try {
     const sql = "select * from user";
     dbConnection.query(sql, (error, results, fields) => {
