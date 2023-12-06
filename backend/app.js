@@ -1,11 +1,14 @@
 
 const express = require('express');
+var bodyParser = require('body-parser');
+
 const app = express();
 const config = require('./config.js');
 const dbConnection = require('./database.js')
 const { HeadBucketCommand, ListObjectsV2Command } = require('@aws-sdk/client-s3');
 // const { s3, s3_bucket_name, s3_region_name } = require('./aws.js');
 var startTime;
+app.use(bodyParser())
 
 app.listen(config.service_port, () => {
   startTime = Date.now();
