@@ -9,10 +9,8 @@ exports.register_user = async (req, res) => {
     const sql = `SELECT COUNT(user.id) AS cnt
     FROM user
     WHERE
-        user.last_name = ? AND
-        user.first_name = ? AND
         user.email = ?`;
-    dbConnection.query(sql,[last_name, first_name, email], (error, results, fields) => {
+    dbConnection.query(sql,[email], (error, results, fields) => {
       if (error) {
         throw error;
       }
