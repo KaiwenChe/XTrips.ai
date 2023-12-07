@@ -32,10 +32,11 @@ exports.register_user = async (req, res) => {
             "message": "Successfully registered user",
             "data": results
           });
+          console.log("successfully registered");
+
         })
           
         };
-      console.log("successfully registered")
       }
 
   )}
