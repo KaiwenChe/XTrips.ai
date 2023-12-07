@@ -1,11 +1,21 @@
 
 const express = require('express');
+const { expressjwt } = require('express-jwt')
+var bodyParser = require('body-parser');
+
 const app = express();
 const config = require('./config.js');
 const dbConnection = require('./database.js')
 const { HeadBucketCommand, ListObjectsV2Command } = require('@aws-sdk/client-s3');
 // const { s3, s3_bucket_name, s3_region_name } = require('./aws.js');
 var startTime;
+app.use(bodyParser())
+app.use(expressjwt({
+  secret: 'f90f8eef-59bc-4bfa-a1e0-ca9bba0ff4d2',
+  algorithms: ['HS256']
+}).unless({
+  path: ['/register', '/login']
+}))
 
 app.listen(config.service_port, () => {
   startTime = Date.now();
@@ -29,6 +39,8 @@ app.get('/', (req, res) => {
 // functions:
 //
 var register = require('./apis/register.js');
+var login = require('./apis/login.js');
 
 
-app.get('/register', register.register_user);  
+app.post('/register', register.register_user);  
+app.post('/login', login.login_user);
