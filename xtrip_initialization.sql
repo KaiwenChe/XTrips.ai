@@ -18,7 +18,8 @@ CREATE TABLE
         overnight BOOLEAN,
         stopover_count INT,
         stopover_duration INT,
-        fares DECIMAL(10, 2)
+        fares DECIMAL(10, 2),
+        flightnumber VARCHAR(100)
     );
 
 -- Create the 'user' table
