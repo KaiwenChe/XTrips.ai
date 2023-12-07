@@ -29,6 +29,8 @@ app.get('/', (req, res) => {
 // functions:
 //
 var register = require('./apis/register.js');
+var generate = require('./apis/generate.js');
 
 
-app.get('/register', register.register_user);  
+app.get('/register', register.register_user);
+app.post('/generate', generate.generate_recommendation);
