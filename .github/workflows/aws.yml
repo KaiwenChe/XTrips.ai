@@ -2,11 +2,11 @@ name: CI
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
+  # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
     
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -50,10 +50,10 @@ jobs:
               cd server
             fi
             
-            git checkout master &&
+            git checkout main &&
             git fetch --all &&
-            git reset --hard origin/master &&
-            git pull origin master &&
+            git reset --hard origin/main &&
+            git pull origin main &&
             cd backend &&
             pm2 start app.js
           '
