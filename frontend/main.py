@@ -8,6 +8,7 @@ import sys
 import os
 import base64
 
+from hashlib import sha256
 from configparser import ConfigParser
 
 
@@ -31,8 +32,8 @@ def prompt():
   """
   print()
   print(">> Enter a command:")
-  print("   0 => register")
-  print("   1 => login")
+  print("   1 => register")
+  print("   2 => login")
 
   print("   6 => generate travel tips for your trip")
   print("   7 => view your travel tips")
@@ -73,8 +74,19 @@ def register(baseurl):
     #
     api = '/register'
     url = baseurl + api
-
-    res = requests.get(url)
+    print('===============================================')
+    print('Register User')
+    print('Please input email address for the user:')
+    email = str(input())
+    print('Please input last name for the user:')
+    last_name = str(input())
+    print('Please input first name for the user:')
+    first_name = str(input())
+    print('Please input password for the user:')
+    password = str(input())
+    password_hash = sha256(password.encode('utf-8')).hexdigest()
+    data = {"last_name": last_name, "first_name": first_name, "email": email, "password_hash": password_hash}
+    res = requests.post(url, json=data)
 
     #
     # let's look at what we got back:
@@ -91,6 +103,7 @@ def register(baseurl):
       return
 
     body = res.json()
+    print(body['message'])
 
 
   except Exception as e:
