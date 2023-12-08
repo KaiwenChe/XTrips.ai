@@ -35,6 +35,7 @@ def prompt():
   print("   1 => login")
 
   print("   6 => generate travel tips for your trip")
+  print("   7 => view your travel tips")
 
 
   cmd = input()
@@ -98,6 +99,7 @@ def register(baseurl):
     logging.error(e)
     return
   
+
 def book(baseurl, data):
     try:
         print('Please input payment information to book your flight.')
@@ -174,6 +176,8 @@ def display(baseurl, userid):
         logging.error("display() failed:")
         logging.error(e)
         return
+    
+
 ############################################################
 #
 # generate
@@ -199,6 +203,7 @@ def generate(baseurl):
     url = baseurl + api
     
     data = {"confirmation_number": confirmation_number}
+    print("Generating AI recommendation, this may take a while...")
     response = requests.post(url, json=data)
 
     if response.status_code != 200:
@@ -212,6 +217,74 @@ def generate(baseurl):
       
     body = response.json()
     print(body['message'])
+    print("Your file id for retrieval: ", body['file_id'])
+
+  except Exception as e:
+    logging.error("generate() failed:")
+    logging.error("url: " + url)
+    logging.error(e)
+    return
+  
+
+############################################################
+#
+# view recommendation
+#
+def view_rec(baseurl):
+  """
+  download and display ai recommendation specified by the user
+
+  Parameters
+  ----------
+  baseurl: baseurl for web service
+
+  Returns
+  -------
+  nothing
+  """
+  try:
+    api = "/view_rec"
+
+    print("Enter your file id: ")
+    file_id = input()
+
+    url = baseurl + api + "/" + file_id
+    
+    response = requests.get(url)
+
+    if response.status_code != 200:
+      # failed:
+      print("Failed with status code:", response.status_code)
+      print("url: " + url)
+      if response.status_code == 400:
+        body = response.json()
+        print("Error message:", body["message"])
+        return
+      
+    body = response.json()
+    datastr = body['data']
+
+    base64_bytes = datastr.encode()
+    bytes = base64.b64decode(base64_bytes)
+    results = bytes.decode()
+
+    # Pagination
+    page_size = 500
+    pages = [results[i:i + page_size] for i in range(0, len(results), page_size)]
+
+    print("**Travel Planner V1.0**")
+    for i, page in enumerate(pages):
+        print(f"\nPage {i + 1}/{len(pages)}")
+        print(page)
+        
+        if i < len(pages) - 1:
+            print("\nView the next page? (y/n)")
+            user_input = input().strip().lower()
+            if user_input  != 'y' and user_input  != 'Y':
+                break
+
+    print("End of results.")
+    return
 
   except Exception as e:
     logging.error("generate() failed:")
@@ -269,6 +342,8 @@ try:
       register(baseurl)
     elif cmd == 6:
       generate(baseurl)
+    elif cmd == 7:
+      view_rec(baseurl)
     
     else:
       print("** Unknown command, try again...")

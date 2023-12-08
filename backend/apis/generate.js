@@ -110,11 +110,12 @@ exports.generate_recommendation = async (req, res) => {
 
                 // Insert into the database
                 let insertSql = `INSERT INTO file (user_id, s3_bucket_key) VALUES (?, ?)`;
-                await queryDatabase(insertSql, [user_id, bucketkey_results_file]);
+                queryResult= await queryDatabase(insertSql, [user_id, bucketkey_results_file]);
 
                 console.log("Inserted file record into database");
                 res.status(200).json({
                     message: "Recommendation generated and stored successfully",
+                    file_id: queryResult.insertId
                 });
 
             } catch (uploadErr) {
