@@ -10,7 +10,7 @@ import base64
 
 from configparser import ConfigParser
 
-
+import re
 
 
 ############################################################
@@ -140,11 +140,13 @@ def display(baseurl, userid):
         data = body['data']
         if len(data) == 0:
             print('No reservation found.')
-            return 
+            return
         print('Reservation:')
         for i in data:
             print()
             fligtnumber = i['flightnumber']
+            r2 = re.split(r'~\d', fligtnumber)[:-1]
+            fn = ', '.join([i.replace('-', '') for i in r2])
             origin = i['origin']
             dest = i['dest']
             session_str = i['session_string']
@@ -152,7 +154,7 @@ def display(baseurl, userid):
             arrival_date = i['arrival_date']
             stopover_duration = i['stopover_duration']
             fares = i['fares']
-            print(fligtnumber, session_str)
+            print(fn, session_str)
             print(origin, 'to', dest)
             print('Departing time:', depart_date)
             print('Arrival time:', arrival_date)
