@@ -98,7 +98,73 @@ def register(baseurl):
     logging.error(e)
     return
   
+def book(baseurl, data):
+    try:
+        print('Please input payment information to book your flight.')
+        while True:
+            credit_name = input('Credit cardholder name:')
+            print('Supported card type: Visa, Mastercard')
+            card_number = input('Credit card number:')
+            cvv = input('credit card cvv code (3 digits): ')
+            if len(credit_name) == 0:
+                print('No name is provided. Please input payment again.')
+            elif not card_number.isdigit() or len(card_number) != 16 or card_number[0] not in ['2', '4', '5']:
+                print('invalid card number. Please input payment again.')
+            elif len(cvv) != 3 or not cvv.isdigit():
+                print('Transaction failed. Please input payment again.')
+            else:
+                break
+        api = '/book'
+        url = baseurl + api
+        res = requests.post(url, json=data)
+        if res.status_code != 200:
+            print('something wrong happened...')
+            return
+        else:
+            print('Your booking is made successfully!')
+    except Exception as e:
+        logging.error("book() failed:")
+        logging.error(e)
+        return
 
+
+def display(baseurl, userid):
+    try:
+        api = '/display'
+        url = baseurl + api
+        res = requests.get(url, json=userid)
+        if res.status_code != 200:
+            print('something wrong happened...')
+            return
+        body = res.json()
+        data = body['data']
+        if len(data) == 0:
+            print('No reservation found.')
+            return 
+        print('Reservation:')
+        for i in data:
+            print()
+            fligtnumber = i['flightnumber']
+            origin = i['origin']
+            dest = i['dest']
+            session_str = i['session_string']
+            depart_date = i['depart_date']
+            arrival_date = i['arrival_date']
+            stopover_duration = i['stopover_duration']
+            fares = i['fares']
+            print(fligtnumber, session_str)
+            print(origin, 'to', dest)
+            print('Departing time:', depart_date)
+            print('Arrival time:', arrival_date)
+            if stopover_duration is not None:
+                print('stopover duration time:', stopover_duration)
+            print(fares)
+            print()
+            print('===============================================')
+    except Exception as e:
+        logging.error("display() failed:")
+        logging.error(e)
+        return
 ############################################################
 #
 # generate
