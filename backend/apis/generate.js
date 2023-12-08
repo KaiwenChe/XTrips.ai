@@ -22,14 +22,21 @@ exports.generate_recommendation = async (req, res) => {
         console.log("call to /generate...");
 
         let body = req.body;
-        const booked_flight_id = body.booked_flight_id;
-        const user_id = body.user_id;
+        const confirmation_num = body.confirmation_number;
 
-        let local_results_file = "/tmp/results.txt";
-        let bucketkey_results_file = "";
+        let sql = "SELECT booked_flight_id, user_id FROM booking WHERE confirmation_number = ?";
+        let queryResult = await queryDatabase(sql, [confirmation_num]);
+        if (queryResult.length === 0) {
+            res.status(400).json({
+                "message": "No results based on the confirmation number"
+            });
+            return;
+        }
 
-        let sql = "SELECT s3_bucket_folder FROM user WHERE id = ?";
-        let queryResult = await queryDatabase(sql, [user_id]);
+        const booked_flight_id = queryResult[0].booked_flight_id, user_id = queryResult[0].user_id;
+
+        sql = "SELECT s3_bucket_folder FROM user WHERE id = ?";
+        queryResult = await queryDatabase(sql, [user_id]);
         if (queryResult.length === 0) {
             res.status(400).json({
                 "message": "User does not have a bucket folder",
