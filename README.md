@@ -13,8 +13,8 @@ Our backend infrastructure utilizes the express.js framework and is deployed on 
 
 Our project have two basic workflows, here's a breakdown of each:
 **Search & Booking Flow:**
-1. Gather Information: Collect necessary data.
-2. API Call: Process the data through an API.
+1. Gather Information: Collect data from user input.
+2. API Call: Call the query api to get flight information.
 3. Database Storage: Store the processed data in flightquery, legs, and flightquery_legs tables.
 4. Display Flight Options: Show flight options to the user.
 5. User Selection: User chooses a flight.
