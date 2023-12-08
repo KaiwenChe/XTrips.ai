@@ -133,7 +133,7 @@ def split_flight_no(uid):
         if '~' in uid:
             l = i.split('~')[0]
             lst.append(l)
-    return ', '.join(lst)
+    return '-'.join(lst)
 
 
 def display(baseurl, userid):
