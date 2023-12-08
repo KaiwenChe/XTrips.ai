@@ -378,7 +378,7 @@ def display(baseurl, userid):
         for i in data:
             print()
             fligtnumber = i['flightnumber'].split(':')
-            fn = split_flight_no(flightnumber)
+            fn = split_flight_no(fligtnumber)
             origin = i['origin']
             dest = i['dest']
             session_str = i['session_string']
