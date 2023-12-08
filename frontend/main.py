@@ -152,7 +152,7 @@ def display(baseurl, userid):
         print('Reservation:')
         for i in data:
             print()
-            fligtnumber = i['flightnumber']
+            fligtnumber = i['flightnumber'].split(':')
             fn = split_flight_no(flightnumber)
             origin = i['origin']
             dest = i['dest']
