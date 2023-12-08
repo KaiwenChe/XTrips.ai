@@ -7,7 +7,7 @@ import logging
 import sys
 import os
 import base64
-
+import re
 from hashlib import sha256
 from configparser import ConfigParser
 
@@ -31,15 +31,15 @@ def load_sessions():
       sessions = json.load(f)
 
 
-def update_session(email, token):
+def update_session(userid, token):
   """
   Updates the session with the given email and token
   """
 
   global sessions
-  sessions[email] = {"token": token, "active": False}
+  sessions[userid] = {"token": token, "active": False}
 
-  use_session(email)
+  use_session(userid)
 
 
 def get_active_session():
@@ -48,13 +48,13 @@ def get_active_session():
   """
 
   global sessions
-  for email in sessions:
-    if sessions[email]["active"]:
-      return email, sessions[email]["token"]
+  for userid in sessions:
+    if sessions[userid]["active"]:
+      return userid, sessions[userid]["token"]
   return None, None
 
 
-def use_session(email):
+def use_session(userid):
   """
   Sets the session with the given email to active
   """
@@ -62,7 +62,7 @@ def use_session(email):
   global sessions
   for session in sessions:
     sessions[session]["active"] = False
-  sessions[email]["active"] = True
+  sessions[userid]["active"] = True
   with open("sessions.json", "w") as f:
     json.dump(sessions, f, indent=2)
 
@@ -121,7 +121,8 @@ def prompt():
   print(">> Enter a command:")
   print("   1 => register")
   print("   2 => login")
-  print("   3 => query")
+  print("   3 => query and book flight")
+  print("   4 => display booked flight")
   print("   6 => generate travel tips for your trip")
   print("   7 => view your travel tips")
 
@@ -249,22 +250,24 @@ def login(baseurl):
 
     body = res.json()
     token = body["data"]["token"]
+    userid = body["data"]["user_id"]
+    # print(body)
     # print(body['message'])
     print(body["message"])
-    update_session(email, token)
+    update_session(userid, token)
     return
 
   except Exception as e:
-    logging.error("register() failed:")
+    logging.error("login() failed:")
     logging.error("url: " + url)
     logging.error(e)
     return
 ############################################################
 # query flight  
 def query(baseurl): 
-    username, token = get_active_session()
+    userid, token = get_active_session()
 
-    if username is None:
+    if userid is None:
         print("No active session...")
         return
 
@@ -298,10 +301,37 @@ def query(baseurl):
           display_page(body, current_page, page_size)
 
           if current_page < total_pages:
-              print("Enter 'n' to go to the next page or any other key to exit.")
-              if input().lower() != 'n':
-                  break
-              current_page += 1
+              print("Enter 'n' to go to the next page, 'b' to book the flight or any other key to exit.")
+              cmd = str(input()).lower()
+              if cmd == 'b':
+                print("Enter the Leg UID to book:")
+                uid = str(input())
+                for leg in body:
+                    if leg['leg_uid'].lower() == uid.lower():
+                        leg_uid = leg['leg_uid']
+                        # start = ':'
+                        # end = '~'
+                        # start_idx = leg_uid.find(start) + len(start)
+                        # end_idx = leg_uid.find(end, start_idx)
+                        # flight_num = leg_uid[start_idx: end_idx]
+                        session_string = leg['session_string']
+                        depart_date = leg['depart_date_time']
+                        arrive_date = leg['arrival_date_time']
+                        overnight = int(leg['overnight'])
+                        stopover_count = int(leg['stopovers_count'])
+                        s = re.findall(r'\d+', leg['stopover_duration'])
+                        # print('s', s)
+                        stopover_duration = int(''.join(s))
+                        fares = leg['price']
+                        data = {'userid': userid, 'flightnumber': leg_uid, 'origin': origin, 'dest': dest, 'date': departDate, 'session_string': session_string, 'depart_date': depart_date, 'arrive_date': arrive_date, 'overnight': overnight, 'stopover_count': stopover_count, 'stopover_duration': stopover_duration, 'fares': fares}
+                        book(baseurl, data)
+                        return None
+                print("Invalid Leg UID.")
+                continue
+              elif cmd == 'n':
+                current_page += 1
+              else:
+                break
           else:
               print("You have reached the last page.")
               break
@@ -356,34 +386,40 @@ def split_flight_no(uid):
     return '-'.join(lst)
 
 
-def display(baseurl, userid):
-    username, token = get_active_session()
+def display(baseurl):
+    userid, token = get_active_session()
 
-    if username is None:
+    if userid is None:
         print("No active session...")
         return
     try:
+        # print('userid', userid, type(userid))
         api = '/display'
         url = baseurl + api
-        res = requests.get(url, json=userid, headers={"Authorization": token})
+        res = requests.get(url, json={"userid": int(userid)}, headers={"Authorization": token})
         if res.status_code != 200:
             print('something wrong happened...')
+            # print(res.json())
+            
             return
         body = res.json()
         data = body['data']
+        print(data)
         if len(data) == 0:
             print('No reservation found.')
             return
         print('Reservation:')
         for i in data:
-            print()
-            fligtnumber = i['flightnumber'].split(':')
-            fn = split_flight_no(fligtnumber)
+
+            # print(i['flightnumber'])
+            flightnumber = i['flightnumber'].split(':')
+            fn = split_flight_no(flightnumber)
+
             origin = i['origin']
             dest = i['dest']
             session_str = i['session_string']
             depart_date = i['depart_date']
-            arrival_date = i['arrival_date']
+            arrival_date = i['arrive_date']
             stopover_duration = i['stopover_duration']
             fares = i['fares']
             print(fn, session_str)
@@ -419,9 +455,9 @@ def generate(baseurl):
   """
   
   try:
-    username, token = get_active_session()
+    userid, token = get_active_session()
 
-    if username is None:
+    if userid is None:
         print("No active session...")
         return
     api = "/generate"
@@ -472,9 +508,9 @@ def view_rec(baseurl):
   nothing
   """
   try:
-    username, token = get_active_session()
+    userid, token = get_active_session()
 
-    if username is None:
+    if userid is None:
         print("No active session...")
         return
     api = "/view_rec"
@@ -579,6 +615,8 @@ try:
       login(baseurl)
     elif cmd == 3:
       query(baseurl)  
+    elif cmd == 4:
+      display(baseurl)
     elif cmd == 6:
       generate(baseurl)
     elif cmd == 7:

@@ -17,9 +17,10 @@ exports.display_booking = async (req, res) =>{
                 });
             });
         };
-        const userid = req.body
-        const sql1 = 'select * from booked_flight where id = (select booked_flight_id from booking where user_id = ?)';
+        const userid = req.body.userid
+        const sql1 = 'select * from booked_flight join booking on booked_flight.id = booking.booked_flight_id where user_id = ?';
         exe(sql1, [userid]).then((data) => {
+            console.log(data)
             res.status(200).json({
                 'data': data
             });
