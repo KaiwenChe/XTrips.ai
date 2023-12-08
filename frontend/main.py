@@ -10,7 +10,7 @@ import base64
 
 from configparser import ConfigParser
 
-import re
+
 
 
 ############################################################
@@ -127,6 +127,14 @@ def book(baseurl, data):
         logging.error(e)
         return
 
+def split_flight_no(uid):
+    lst = []
+    for i in uid:
+        if '~' in uid:
+            l = i.split('~')[0]
+            lst.append(l)
+    return ', '.join(lst)
+
 
 def display(baseurl, userid):
     try:
@@ -145,8 +153,7 @@ def display(baseurl, userid):
         for i in data:
             print()
             fligtnumber = i['flightnumber']
-            r2 = re.split(r'~\d', fligtnumber)[:-1]
-            fn = ', '.join([i.replace('-', '') for i in r2])
+            fn = split_flight_no(flightnumber)
             origin = i['origin']
             dest = i['dest']
             session_str = i['session_string']
