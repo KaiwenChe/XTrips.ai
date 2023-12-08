@@ -123,8 +123,8 @@ def prompt():
   print("   2 => login")
   print("   3 => query and book flight")
   print("   4 => display booked flight")
-  print("   6 => generate travel tips for your trip")
-  print("   7 => view your travel tips")
+  print("   5 => generate travel tips for your trip")
+  print("   6 => view your travel tips")
 
 
   cmd = input()
@@ -617,9 +617,9 @@ try:
       query(baseurl)  
     elif cmd == 4:
       display(baseurl)
-    elif cmd == 6:
+    elif cmd == 5:
       generate(baseurl)
-    elif cmd == 7:
+    elif cmd == 6:
       view_rec(baseurl)
     
     else:
