@@ -40,7 +40,9 @@ app.get('/', (req, res) => {
 //
 var register = require('./apis/register.js');
 var login = require('./apis/login.js');
+const query = require('./apis/query.js'); 
 
 
 app.post('/register', register.register_user);  
 app.post('/login', login.login_user);
+app.post('/query',query.query_flight);
