@@ -410,9 +410,11 @@ def display(baseurl):
             return
         print('Reservation:')
         for i in data:
+
             # print(i['flightnumber'])
             flightnumber = i['flightnumber'].split(':')
             fn = split_flight_no(flightnumber)
+
             origin = i['origin']
             dest = i['dest']
             session_str = i['session_string']
