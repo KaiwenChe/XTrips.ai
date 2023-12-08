@@ -101,7 +101,7 @@ def register(baseurl):
 
 ############################################################
 #
-# register
+# generate
 #
 def generate(baseurl):
   """
