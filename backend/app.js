@@ -44,8 +44,12 @@ var register = require('./apis/register.js');
 var login = require('./apis/login.js');
 var generate = require('./apis/generate.js');
 var view_rec = require('./apis/view_rec.js');
+var book = require('./apis/book.js');
+var display = require('./apis/display.js');
 
 app.post('/register', register.register_user);  
 app.post('/login', login.login_user);
+app.post('/book', book.book_flight);
+app.get('/display', display.display_booking);
 app.post('/generate', generate.generate_recommendation);
 app.get('/view_rec/:file_id', view_rec.view_recommendation);
