@@ -325,7 +325,7 @@ def query(baseurl):
                         fares = leg['price']
                         data = {'userid': userid, 'flightnumber': leg_uid, 'origin': origin, 'dest': dest, 'date': departDate, 'session_string': session_string, 'depart_date': depart_date, 'arrive_date': arrive_date, 'overnight': overnight, 'stopover_count': stopover_count, 'stopover_duration': stopover_duration, 'fares': fares}
                         book(baseurl, data)
-                        break
+                        return None
                 print("Invalid Leg UID.")
                 continue
               elif cmd == 'n':
@@ -399,7 +399,7 @@ def display(baseurl):
         res = requests.get(url, json={"userid": int(userid)}, headers={"Authorization": token})
         if res.status_code != 200:
             print('something wrong happened...')
-            print(res.json())
+            # print(res.json())
             
             return
         body = res.json()
