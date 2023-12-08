@@ -87,7 +87,20 @@ def handle_error(url, res):
   print("  url:", url)
   print("  message:", res.json()["message"])
 
-
+def display_page(data, page, page_size):
+    start = (page - 1) * page_size
+    end = start + page_size
+    for leg in data[start:end]:
+        print(f"Leg UID: {leg['leg_uid']}")
+        print(f"Session String: {leg['session_string']}")
+        print(f"Departure: {leg['depart_date_time']}")
+        print(f"Arrival: {leg['arrival_date_time']}")
+        print(f"Overnight: {'Yes' if leg['overnight'] else 'No'}")
+        print(f"Price: ${leg['price']} USD")
+        print(f"Stopover Duration: {leg['stopover_duration']}")
+        print(f"Number of Stopovers: {leg['stopovers_count']}")
+        print(f"Long Stopover: {'Yes' if leg['long_stopover'] else 'No'}")
+        print("-" * 40)  # This adds a separator line between each leg
 ############################################################
 #
 # prompt
@@ -108,7 +121,7 @@ def prompt():
   print(">> Enter a command:")
   print("   1 => register")
   print("   2 => login")
-
+  print("   3 => query")
   print("   6 => generate travel tips for your trip")
   print("   7 => view your travel tips")
 
@@ -246,7 +259,57 @@ def login(baseurl):
     logging.error("url: " + url)
     logging.error(e)
     return
+############################################################
+# query flight  
+def query(baseurl): 
+    try:
+      print('Please enter your origin airport code: (e.g: ORD) ')
+      origin = input()
+      print('Please enter your destination airport code: (e.g: MDW) ')
+      dest = input()
+      print('Please enter your departDate: (form: YYYY-MM-DD) ')
+      departDate = input()
 
+      data = {"origin": origin, "dest": dest, "departDate":departDate}
+      
+      api = '/query'
+      url = baseurl+api
+
+      res = requests.post(url, json=data)
+
+      if not res.ok:
+        handle_error(url, res)
+        return
+      
+      body = res.json()
+
+      page_size = 5  
+      current_page = 1
+      total_pages = (len(body) + page_size - 1) // page_size
+      
+      while True:
+          print(f"Page {current_page}/{total_pages}")
+          display_page(body, current_page, page_size)
+
+          if current_page < total_pages:
+              print("Enter 'n' to go to the next page or any other key to exit.")
+              if input().lower() != 'n':
+                  break
+              current_page += 1
+          else:
+              print("You have reached the last page.")
+              break
+
+
+
+
+        
+    except Exception as e:
+      logging.error("query() failed:")
+      logging.error(e)
+      return
+    
+############################################################
 
 def book(baseurl, data):
     try:
@@ -490,7 +553,9 @@ try:
     if cmd == 1:
       register(baseurl)
     elif cmd == 2:
-        login(baseurl)
+      login(baseurl)
+    elif cmd == 3:
+      query(baseurl)  
     elif cmd == 6:
       generate(baseurl)
     elif cmd == 7:
