@@ -262,6 +262,12 @@ def login(baseurl):
 ############################################################
 # query flight  
 def query(baseurl): 
+    username, token = get_active_session()
+
+    if username is None:
+        print("No active session...")
+        return
+
     try:
       print('Please enter your origin airport code: (e.g: ORD) ')
       origin = input()
@@ -275,7 +281,7 @@ def query(baseurl):
       api = '/query'
       url = baseurl+api
 
-      res = requests.post(url, json=data)
+      res = requests.post(url, json=data, headers={"Authorization": token})
 
       if not res.ok:
         handle_error(url, res)
@@ -312,6 +318,7 @@ def query(baseurl):
 ############################################################
 
 def book(baseurl, data):
+    
     try:
         print('Please input payment information to book your flight.')
         while True:
@@ -350,10 +357,15 @@ def split_flight_no(uid):
 
 
 def display(baseurl, userid):
+    username, token = get_active_session()
+
+    if username is None:
+        print("No active session...")
+        return
     try:
         api = '/display'
         url = baseurl + api
-        res = requests.get(url, json=userid)
+        res = requests.get(url, json=userid, headers={"Authorization": token})
         if res.status_code != 200:
             print('something wrong happened...')
             return
@@ -405,7 +417,13 @@ def generate(baseurl):
   -------
   nothing
   """
+  
   try:
+    username, token = get_active_session()
+
+    if username is None:
+        print("No active session...")
+        return
     api = "/generate"
 
     print("Enter your confirmation number: ")
@@ -415,7 +433,7 @@ def generate(baseurl):
     
     data = {"confirmation_number": confirmation_number}
     print("Generating AI recommendation, this may take a while...")
-    response = requests.post(url, json=data)
+    response = requests.post(url, json=data , headers={"Authorization": token})
 
     if response.status_code != 200:
       # failed:
@@ -454,6 +472,11 @@ def view_rec(baseurl):
   nothing
   """
   try:
+    username, token = get_active_session()
+
+    if username is None:
+        print("No active session...")
+        return
     api = "/view_rec"
 
     print("Enter your file id: ")
@@ -461,7 +484,7 @@ def view_rec(baseurl):
 
     url = baseurl + api + "/" + file_id
     
-    response = requests.get(url)
+    response = requests.get(url, headers={"Authorization": token})
 
     if response.status_code != 200:
       # failed:
