@@ -34,6 +34,8 @@ def prompt():
   print("   0 => register")
   print("   1 => login")
 
+  print("   6 => generate travel tips for your trip")
+
 
   cmd = input()
 
@@ -95,6 +97,52 @@ def register(baseurl):
     logging.error("url: " + url)
     logging.error(e)
     return
+  
+
+############################################################
+#
+# register
+#
+def generate(baseurl):
+  """
+  Generate ai recommendation based on the booking information of the user
+
+  Parameters
+  ----------
+  baseurl: baseurl for web service
+
+  Returns
+  -------
+  nothing
+  """
+  try:
+    api = "/generate"
+
+    print("Enter your confirmation number: ")
+    confirmation_number = input()
+
+    url = baseurl + api
+    
+    data = {"confirmation_number": confirmation_number}
+    response = requests.post(url, json=data)
+
+    if response.status_code != 200:
+      # failed:
+      print("Failed with status code:", response.status_code)
+      print("url: " + url)
+      if response.status_code == 400 or response.status_code == 500:
+        body = response.json()
+        print("Error message:", body["message"])
+        return
+      
+    body = response.json()
+    print(body['message'])
+
+  except Exception as e:
+    logging.error("generate() failed:")
+    logging.error("url: " + url)
+    logging.error(e)
+    return
 
 
 ############################################################
@@ -144,6 +192,8 @@ try:
     #
     if cmd == 1:
       register(baseurl)
+    elif cmd == 6:
+      generate(baseurl)
     
     else:
       print("** Unknown command, try again...")
