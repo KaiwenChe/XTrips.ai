@@ -1,5 +1,5 @@
 import requests
-import jsons
+import json
 
 import uuid
 import pathlib
@@ -12,6 +12,80 @@ from hashlib import sha256
 from configparser import ConfigParser
 
 
+############################################################
+#
+# auth
+#
+
+sessions = {}
+
+
+def load_sessions():
+  """
+  Loads the previous sessions from the sessions.json file
+  """
+
+  global sessions
+  if os.path.exists("sessions.json"):
+    with open("sessions.json", "r") as f:
+      sessions = json.load(f)
+
+
+def update_session(email, token):
+  """
+  Updates the session with the given email and token
+  """
+
+  global sessions
+  sessions[email] = {"token": token, "active": False}
+
+  use_session(email)
+
+
+def get_active_session():
+  """
+  Returns the active session
+  """
+
+  global sessions
+  for email in sessions:
+    if sessions[email]["active"]:
+      return email, sessions[email]["token"]
+  return None, None
+
+
+def use_session(email):
+  """
+  Sets the session with the given email to active
+  """
+
+  global sessions
+  for session in sessions:
+    sessions[session]["active"] = False
+  sessions[email]["active"] = True
+  with open("sessions.json", "w") as f:
+    json.dump(sessions, f, indent=2)
+
+
+def clear_sessions():
+  """
+  Clears all sessions
+  """
+
+  global sessions
+  sessions = {}
+  with open("sessions.json", "w") as f:
+    json.dump(sessions, f, indent=2)
+
+
+def handle_error(url, res):
+  """
+  Handles an error from a request
+  """
+
+  print("Failed with status code:", res.status_code)
+  print("  url:", url)
+  print("  message:", res.json()["message"])
 
 
 ############################################################
@@ -112,6 +186,67 @@ def register(baseurl):
     logging.error(e)
     return
   
+############################################################
+#
+# login
+#
+def login(baseurl):
+  """
+  login user 
+
+  Parameters
+  ----------
+  baseurl: baseurl for web service
+
+  Returns
+  -------
+  nothing
+  """
+
+  try:
+    #
+    # call the web service:
+    #
+    api = '/login'
+    url = baseurl + api
+    print('===============================================')
+    print('Login User')
+    print('Please input email address for the user:')
+    email = str(input())
+    print('Please input password for the user:')
+    password = str(input())
+
+    password_hash = sha256(password.encode('utf-8')).hexdigest()
+    data = {"email": email, "password_hash": password_hash}
+    res = requests.post(url, json=data)
+
+    #
+    # let's look at what we got back:
+    #
+    if res.status_code != 200:
+      # failed:
+      print("Failed with status code:", res.status_code)
+      print("url: " + url)
+      if res.status_code == 400:
+        # we'll have an error message
+        body = res.json()
+        print("Error message:", body)
+      #
+      return
+
+    body = res.json()
+    token = body["data"]["token"]
+    # print(body['message'])
+    print(body["message"])
+    update_session(email, token)
+    return
+
+  except Exception as e:
+    logging.error("register() failed:")
+    logging.error("url: " + url)
+    logging.error(e)
+    return
+
 
 def book(baseurl, data):
     try:
@@ -347,12 +482,15 @@ try:
   #
   # main processing loop:
   #
+  load_sessions()
   cmd = prompt()
 
   while cmd != 0:
     #
     if cmd == 1:
       register(baseurl)
+    elif cmd == 2:
+        login(baseurl)
     elif cmd == 6:
       generate(baseurl)
     elif cmd == 7:
