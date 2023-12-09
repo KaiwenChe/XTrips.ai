@@ -412,6 +412,7 @@ def display(baseurl):
         for i in data:
 
             # print(i['flightnumber'])
+            print('Confirmation number: ', i['confirmation_number'])
             flightnumber = i['flightnumber'].split(':')
             fn = split_flight_no(flightnumber)
 
