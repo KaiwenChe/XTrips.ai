@@ -65,7 +65,17 @@ CREATE TABLE
 CREATE TABLE
     leg (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        session_string VARCHAR(255)
+        session_string VARCHAR(255),
+        origin VARCHAR(100),
+        dest VARCHAR(100),
+        depart_date_time DATETIME,
+        arrival_date_time DATETIME,
+        overnight BOOLEAN,
+        price DECIMAL(10, 2),
+        stopover_duration INT,     
+        stopovers_count INT,
+        long_stopover BOOLEAN,
+        uid VARCHAR(255)
     );
 
 -- Create the 'flightquery_leg' table
