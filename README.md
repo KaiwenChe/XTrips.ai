@@ -58,11 +58,11 @@ Here is a list of our apis:
 The client-side application allows users to interact with the system to book flights and generate itinerary. Here is a guide about how to use this application:
 1.	login/register
 Before proceeding to the system’s main features, the user needs to login with an email address and a password. For new users, they can register a new account instead and use it to login next time,
-2.	search flight and make a reservation
+2. search flight and make a reservation
 The user can search flights by inputting airport codes and date. After a while, the user will see a list of flights and choose one to book. To complete the reservation, payment information is required. The user will receive a notification when the process is finished.
-3.	Display reservations
+3. Display reservations
 The user is able to see details about all reservations made by the user. 
-4.	Generate and View Itinerary Recommendation
+4. Generate and View Itinerary Recommendation
 To generate the recommendation, the user is required to provide the confirmation number of a reservation made on the system. A file id will be returned and the user can use it to retrieve a file with itinerary recommendation inside.
 
 ## 5. Run the Project
