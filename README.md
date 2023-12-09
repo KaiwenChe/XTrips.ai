@@ -1,5 +1,7 @@
 # XTrips.ai Final Project Report
 
+Welcome to our XTrips.ai demonstration. Today, we're excited to take you through a practical and straightforward exploration of our application. Developed with express.js and hosted on AWS EC2, XTrips.ai is our answer to the complexities of travel planning. We've focused on creating a tool that's not only technologically advanced but also intuitive and easy to use. Whether you're planning your next trip or just curious about our technology, this walkthrough is designed to give you a clear understanding of how XTrips.ai can simplify your travel experience.
+
 ## 1. Team Member:
 Jingyu WU  jwt9656
 Kaiwen Che mzi4117
