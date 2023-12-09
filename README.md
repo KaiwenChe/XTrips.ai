@@ -7,6 +7,18 @@ Bingqi Shang eoq2203
 Yangshuo Zhang
 
 ## 2. Database Design and Deployment
+The 'xtrip' database, designed for a flight booking system, has been successfully created and deployed on Amazon Web Services (AWS). This deployment leverages AWS's robust, scalable, and secure cloud infrastructure to ensure high availability and performance of the flight booking system.
+
+The database consists of eight interrelated tables:
+
+1.	booked_flight: Stores details of each booked flight’s information.
+2.	user: Stores user information. A password is implemented for security,
+3.	booking: Links user information with responding flight bookings.
+4.	flightquery: Stores flight’s origin, destination, and date
+5.	leg: Stores each flight’s information returned by flightAPI
+6.	flightquery_leg: connects flightquery and leg
+7.	file: stores itinerary files’ amazon s3 keys
+8.	bookedflight_session: Links booked_flight with a session string. 
 
 ## 3. Backend and API Design
 Our backend infrastructure utilizes the express.js framework and is deployed on Amazon Web Services (AWS) Elastic Compute Cloud (EC2) for robust and scalable performance.
