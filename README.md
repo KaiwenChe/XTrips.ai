@@ -18,7 +18,8 @@ The database consists of eight interrelated tables:
 5.	leg: Stores each flight’s information returned by flightAPI
 6.	flightquery_leg: connects flightquery and leg
 7.	file: stores itinerary files’ amazon s3 keys
-8.	bookedflight_session: Links booked_flight with a session string. 
+8.	bookedflight_session: Links booked_flight with a session string.
+Here is the sql file of the database: [Link to xtrip_initialization.sql](xtrip_initialization.sql)
 
 ## 3. Backend and API Design
 Our backend infrastructure utilizes the express.js framework and is deployed on Amazon Web Services (AWS) Elastic Compute Cloud (EC2) for robust and scalable performance.
