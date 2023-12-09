@@ -428,7 +428,7 @@ def display(baseurl):
             print('Arrival time:', arrival_date)
             if stopover_duration is not None:
                 print('stopover duration time:', stopover_duration)
-            print('Total Price:', fares)
+            print('Total Price: $' + fares)
             print()
             print('===============================================')
     except Exception as e:
