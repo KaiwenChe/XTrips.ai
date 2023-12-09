@@ -19,6 +19,7 @@ The database consists of eight interrelated tables:
 6.	flightquery_leg: connects flightquery and leg
 7.	file: stores itinerary files’ amazon s3 keys
 8.	bookedflight_session: Links booked_flight with a session string.
+
 Here is the sql file of the database: [Link to xtrip_initialization.sql](xtrip_initialization.sql)
 
 ## 3. Backend and API Design
