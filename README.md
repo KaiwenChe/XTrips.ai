@@ -33,7 +33,7 @@ Our project have two basic workflows, here's a breakdown of each:
 4. Display Flight Options: Show flight options to the user.
 5. User Selection: User chooses a flight.
 6. Book Flight: Selected flight details are stored in booked_flight.
-7. Generate Confirmation Number: Create a unique identifier (UUID) for the booking.
+7. Generate Confirmation Number: Create a confirmation number for the booking.
 8. Record Booking: Add a new record to the booking table.
 9. Retrieve & Return Data: Fetch new records and return the confirmation number.
 
